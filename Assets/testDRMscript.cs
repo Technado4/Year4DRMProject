@@ -1,17 +1,85 @@
+using System.IO;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class testDRMscript : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        compareIDs();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    bool compareIDs()
+    {
+        string filename = "addresses.txt";
+        if (File.Exists(filename))
+        {
+            StreamReader sr = File.OpenText(filename);
+            string line = sr.ReadLine();
+            int lineCount = 0;
+            bool legal = true;
+            Token token = new Token();
+            while (line != null)
+            {
+                Debug.Log(line); // prints each line of the file
+                if (lineCount == 0)
+                {
+                    if (!(token.getModel().Equals(line)))
+                    {
+                        legal = false;
+                        Debug.Log("Model Different");
+                        Debug.Log(line);
+                    }
+                }
+                else if (lineCount == 1)
+                {
+                    if (!(token.getUUID().Equals(line)))
+                    {
+                        legal = false;
+                        Debug.Log("UUID Different");
+                        Debug.Log(line);
+                    }
+                }
+                else
+                {
+                   if (token.getGraphicID() != int.Parse(line))
+                    {
+                        legal = false;
+                        Debug.Log("Graphic Different");
+                        Debug.Log(line);
+                    }
+                }
+                lineCount++;
+                line = sr.ReadLine();
+            }
+
+            Debug.Log(legal);
+            return legal;
+        }
+        else
+        {
+            writeToFile();
+            return true;
+        }
+        
+    }
+
+    void writeToFile()
+    {
+        string filename = "addresses.txt";
+        StreamWriter sr = File.CreateText(filename);
+        Token token = new Token();
+        sr.WriteLine(token.getModel());
+        sr.WriteLine(token.getUUID());
+        sr.WriteLine(token.getGraphicID());
+        sr.Close();
     }
     
     public class Token 
@@ -25,15 +93,15 @@ public class testDRMscript : MonoBehaviour
 
  
 
-        public Token(string mdl, string uuid, int gid) 
+        public Token() 
 
         { 
 
-            model = mdl; 
+            model = SystemInfo.deviceModel; 
 
-            identifier = uuid; 
+            identifier = SystemInfo.deviceUniqueIdentifier; 
 
-            graphicID = gid; 
+            graphicID = SystemInfo.graphicsDeviceID; 
 
         } 
 
