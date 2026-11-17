@@ -1,13 +1,15 @@
+using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
 public class testDRMscript : MonoBehaviour
 {
+    private bool cooldown = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        compareIDs();
+        StartCoroutine(DRMTest());
     }
 
     // Update is called once per frame
@@ -16,6 +18,28 @@ public class testDRMscript : MonoBehaviour
         
     }
 
+    IEnumerator DRMTest()
+    {
+        DRMCheck();
+        yield return new WaitForSeconds(10);
+        DRMCheck();
+        yield return new WaitForSeconds(15);
+        DRMCheck();
+    }
+    
+    public bool DRMCheck()
+    {
+        if (cooldown)
+        {
+            Debug.Log("DRM on Cooldown!");
+            return true;
+        }
+        
+            
+            cooldown = true;
+            StartCoroutine(DRMCooldown());
+            return compareIDs();
+    }
     bool compareIDs()
     {
         string filename = "addresses.txt";
@@ -80,6 +104,12 @@ public class testDRMscript : MonoBehaviour
         sr.WriteLine(token.getUUID());
         sr.WriteLine(token.getGraphicID());
         sr.Close();
+    }
+
+    IEnumerator DRMCooldown()
+    {
+        yield return new WaitForSecondsRealtime(20);
+        cooldown = false;
     }
     
     public class Token 
