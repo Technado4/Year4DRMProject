@@ -1,39 +1,18 @@
 using System.Collections;
 using System.IO;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
-public class testDRMscript : MonoBehaviour
+public class DRMScript : MonoBehaviour
 {
-    private bool cooldown = false;
-    public TextMeshProUGUI legalText;
+    public bool cooldown = false;
+   
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
     }
 
-    public void OnCheck()
-    {
-        bool cooldownCheck = cooldown;
-        if (!DRMCheck())
-        {
-            legalText.text = "Oops! You seem to be a pirate matey!";
-            legalText.color = Color.red;
-        }
-        else
-        {
-            legalText.color = Color.white;
-            if (cooldownCheck)
-            {
-                legalText.text = "DRM on cooldown!";
-            }
-            else
-            {
-                legalText.text = "All good!";
-            }
-        }
-    }
+    
 
     // Update is called once per frame
     void Update()
